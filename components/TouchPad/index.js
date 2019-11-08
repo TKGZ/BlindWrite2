@@ -62,8 +62,9 @@ export default function TouchPad()
           // responder. Returns true by default. Is currently only supported on android.
           return true;
         },
-      });
-
+    });
+    
+    //TODO
     //gesture events (start of gesture, moving of gesture, end of gesture)
     function onStart(e, g)
     {
@@ -85,6 +86,7 @@ export default function TouchPad()
           setLocB(b);
     }
 
+    //TODO
     function onEnd(e, g)
     {
 
