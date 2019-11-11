@@ -7,8 +7,8 @@ import { StyleSheet, Text, View, Dimensions, PanResponder } from 'react-native';
 //how much range should gestures be detected within center point
 const RADIUS = 30;
 
-const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
+const WIDTH = Dimensions.get('screen').width;
+const HEIGHT = Dimensions.get('screen').height;
 
 export default function TouchPad()
 {
@@ -63,7 +63,7 @@ export default function TouchPad()
           return true;
         },
     });
-    
+
     //TODO
     //gesture events (start of gesture, moving of gesture, end of gesture)
     function onStart(e, g)
@@ -92,7 +92,9 @@ export default function TouchPad()
 
     }
 
+    //TODO
     //returns array of squares to add to jsx element
+    //
     function renderSquares()
     {
 
