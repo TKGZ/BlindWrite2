@@ -2,13 +2,14 @@ import * as helper from '../helper';
 
 import React, {useState} from 'react';
 import { StyleSheet, Text, View, Dimensions, PanResponder } from 'react-native';
+import Square from './square';
 
 
 //how much range should gestures be detected within center point
 const RADIUS = 30;
 
-const WIDTH = Dimensions.get('screen').width;
-const HEIGHT = Dimensions.get('screen').height;
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 
 export default function TouchPad()
 {
@@ -116,6 +117,8 @@ export default function TouchPad()
                 a={locA}
                 b={locB}
             ></DisplayCoordinates>
+
+            <Square></Square>
             <Text>Touchpad Here</Text>
         </View>
     )
@@ -146,7 +149,9 @@ const styles = StyleSheet.create({
     },
     surface: {
         backgroundColor: 'orange',
-        flex: 1,
+       // flex: 1,
         height: '80%',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
     }
 })
