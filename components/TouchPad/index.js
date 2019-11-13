@@ -11,6 +11,13 @@ const RADIUS = 30;
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
+//dimensions
+const SQUARES_PER_ROW = 3;
+const SQUARES_PER_COL = 3;
+
+const HEIGHT_TOUCHPAD = Math.round(0.8*HEIGHT);
+const WIDTH_TOUCHPAD = WIDTH;
+
 export default function TouchPad()
 {
 
@@ -27,7 +34,10 @@ export default function TouchPad()
     //areas between are circles (a-d)
     const [circles, setCircles] = useState([]);
 
-
+    const [layoutX, setLayoutX] = useState(0);
+    const [layoutY, setLayoutY] = useState(0);
+    const [width, setWidth] = useState(WIDTH);
+    const [height, setHeight] = useState(HEIGHT);
     
     _panResponder = PanResponder.create({
         // Ask to be the responder:
@@ -79,7 +89,6 @@ export default function TouchPad()
           a = e.nativeEvent.locationX;
           b = e.nativeEvent.locationY;
   
-  
           //tryVibration(evt);
           setLocX(x);
           setLocY(y);
@@ -93,16 +102,9 @@ export default function TouchPad()
 
     }
 
-    //TODO
-    //returns array of squares to add to jsx element
-    //
-    function renderSquares()
-    {
-
-    }
+    var renderThis = getSquares();
 
     return(
-        
         <View
         alignItems="center"
         flexDirection="column"
@@ -111,15 +113,15 @@ export default function TouchPad()
         {..._panResponder.panHandlers}
         style={styles.surface}
         >
-            <DisplayCoordinates
+            {/* <DisplayCoordinates
                 x={locX}
                 y={locY}
                 a={locA}
                 b={locB}
-            ></DisplayCoordinates>
-
-            <Square></Square>
-            <Text>Touchpad Here</Text>
+            ></DisplayCoordinates> */}
+            {/* {getSquares} */}
+            {renderThis}
+            {/* <Text>Touchpad Here</Text> */}
         </View>
     )
 }
@@ -139,6 +141,33 @@ function DisplayCoordinates(props)
 function getArea(point)
 {
     return (1);
+}
+
+//generates enough squares to fill out everything!
+function getSquares(rows = SQUARES_PER_ROW, cols = SQUARES_PER_COL)
+{
+    var squares = [];
+    for (var i = 0; i < rows; i++)
+    {
+        for (var j = 0; j< cols; j++)
+        {
+            squares.push(<Square
+                key = {(10*i + j)}
+
+                positionX = {i}
+                positionY = {j}
+                radius = {RADIUS}
+                elementsPerRow = {SQUARES_PER_ROW}
+                elementsPerCol = {SQUARES_PER_COL}
+                parentHeight = {HEIGHT_TOUCHPAD}
+                parentWidth = {WIDTH_TOUCHPAD}
+
+                type = "square"
+            >
+            </Square>);
+        }
+    }
+    return squares;
 }
 
 const styles = StyleSheet.create({

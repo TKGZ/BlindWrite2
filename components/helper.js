@@ -39,8 +39,8 @@ export function isEquals(a, b)
 //returns "how much" to push the item in that direction to place it properly
 //example for middle items across x access of size 100, 20 square
 //getSpace(1, 3, 10, 100)
-export function getSpaceInterval(i, n, r, l)
+export function getSpaceInterval(index, numberOfElements, radius, length)
 {
-    return (i * (l -  2*r)/n);
+    return ((index) * (length -  2*radius)/(numberOfElements - 1));
 }
 
