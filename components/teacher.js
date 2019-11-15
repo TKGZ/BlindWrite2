@@ -19,31 +19,43 @@ const numberOfCharacters = keys.length;
 
 //returns next step
 //0.0 if done!
-//returns this: [status, stroke object}]
+//types:
+//0 means mid-stroke
+//1 means new stroke
+//2 means entire character is done!
 export function getNextStep(lastStep, strokeLength, numberOfStrokes)
 {
-    if (lastStep.stroke >= strokeLength)
-    {
-        if (lastStep.strokeStep >= numberOfStrokes)
-        {
-            //CHARACTER SUCCESS
-            return (2, {stroke: lastStep.stroke, strokeSTep: lastStep.strokeStep});
-        }
-        //SAME STROKE
-        return ([
-            1,
-            {
-            stroke: (lastStep.stroke + 1),
-            strokeStep: 0,
-        }])
+    console.log("NEXT STEP");
+    console.log("last stroke: ")
+    var result = {
+        type: 0,
+        step: {
+            stroke: lastStep.stroke,
+            strokeStep: (lastStep.strokeStep + 1),
+        },
     }
-    //NEW STROKE
-    return([
-        2,
+
+    if (lastStep.strokeStep >= strokeLength)
+    {
+        //at the end of the stroke
+        if (lastStep.stroke >= numberOfStrokes)
         {
-        stroke: lastStep.stroke,
-        strokeStep: (lastStep.strokeStep + 1),
-    }])
+            // console.log("DONE STROKE")
+            //no more new strokes
+            //CHARACTER SUCCESS
+            result.type = 2;
+            result.step.stroke = lastStep.stroke;
+            result.step.strokeStep = lastStep.strokeStep;
+        }
+        //NEW STROKE
+        else 
+        {
+            result.type = 1;
+            result.step.stroke = lastStep.stroke + 1;
+            result.step.strokeStep = 0;
+        }
+    }
+    return result;
 }
 
 //returns random character stroke

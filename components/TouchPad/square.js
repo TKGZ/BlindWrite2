@@ -82,12 +82,12 @@ export default function shape(props)
     {
         //TODO check type first before starting!!!
         // check if on area, update setArea accordingly
-        console.log("tryp update")
+        // console.log("tryp update")
         if ((left < props.locX) && (props.locX < (left + (2*radius)))
         && ((top + (.2*HEIGHT)) < props.locY) && (props.locY < ((top + (.2*HEIGHT)) + (2*radius))))
         {
             setOnArea(props.id);
-            console.log("area updated");
+            // console.log("area updated");
 
             // setOnArea("left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
         }

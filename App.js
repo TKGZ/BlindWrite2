@@ -84,14 +84,24 @@ export default function App() {
     if (onArea == nextArea && failedStroke == false)
     {
       var newStep = teacher.getNextStep(lastStep, charPattern[lastStep.stroke].length, charPattern[0].length);
-      if (newStep[0] == 0)
+      if (newStep.type == 0)
       {
-        updateSteps([nextStep, newStep[1]]);
+        // console.log("Mid-stroke step");
+        updateSteps([nextStep, newStep.step]);
       }
-      else
+      else if (newStep.type == 1)
       {
-        updateSteps([nextStep, newStep[1]]);
+        onStrokeSuccess();
+        //newSTROKE
+        updateSteps([nextStep, newStep.step]);
 
+      } else if (newStep.type == 2)
+      {
+        //character is done!!
+        //check if still no final area!
+
+        // updateSteps([nextStep, newStep.step])
+        onCharSuccess();
       }
     }
     else
@@ -103,7 +113,6 @@ export default function App() {
       else
       {
         onStrokeFail();
-
       }
       //fail! wrong move!
     }   
@@ -164,7 +173,7 @@ export default function App() {
   function onCharSuccess()
   {
     //next character
-    console.log("Character Success");
+    console.log("Character SUCCESS");
   }
 
   return (
