@@ -3,10 +3,12 @@ import * as helper from '../helper';
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Dimensions, PanResponder, Vibration } from 'react-native';
 import Square from './square';
+import { getNextStep } from '../teacher';
 
 
 //how much range should gestures be detected within center point
-const RADIUS = 30;
+const RADIUS_SQUARE = 35 ;
+const RADIUS_CIRCLE = 15;
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -20,6 +22,10 @@ const WIDTH_TOUCHPAD = WIDTH;
 
 export default function TouchPad(props)
 {
+
+    var lastArea = props.lastArea;
+    var nextArea = props.nextArea;
+
 
     //relative to root
     const [locX, setLocX] = useState(0);
@@ -118,7 +124,7 @@ export default function TouchPad(props)
     //update the state of the squares
     useEffect(() => {
         setSquares(getSquares());
-
+        setCircles(getCircles());
         //check if current touch on what type, then vibrate
     })
 
@@ -137,9 +143,9 @@ export default function TouchPad(props)
 
                     positionX = {j}
                     positionY = {i}
-                    radius = {RADIUS}
-                    elementsPerRow = {SQUARES_PER_ROW}
-                    elementsPerCol = {SQUARES_PER_COL}
+                    radius = {RADIUS_SQUARE}
+                    elementsPerRow = {rows}
+                    elementsPerCol = {cols}
                     parentHeight = {HEIGHT_TOUCHPAD}
                     parentWidth = {WIDTH_TOUCHPAD}
 
@@ -149,6 +155,9 @@ export default function TouchPad(props)
                     locX = {locX}
                     locY = {locY}
 
+                    lastArea = {lastArea}
+                    nextArea = {nextArea}
+
                     type = "square"
                 >
                 </Square>);
@@ -156,6 +165,45 @@ export default function TouchPad(props)
             }
         }
         return squares;
+    }
+
+    function getCircles(rows = 5, cols = 5)
+    {
+        var circles = [];
+        var count = 1;
+        var ids = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        for (var i = 1; i < rows; i+=2)
+        {
+            for (var j = 1; j < cols; j+=2)
+            {
+                circles.push(<Square
+                    key = {ids[count-1]}
+                    id = {ids[count-1]}
+                     
+                    positionX = {j}
+                    positionY = {i}
+                    radius = {RADIUS_CIRCLE}
+                    elementsPerRow = {rows}
+                    elementsPerCol = {cols}
+                    parentHeight = {HEIGHT_TOUCHPAD}
+                    parentWidth = {WIDTH_TOUCHPAD}
+
+                    // for determining which area we are currently on
+                    area = {onArea}
+                    setOnArea = {setOnArea}
+                    locX = {locX}
+                    locY = {locY}
+
+                    lastArea = {lastArea}
+                    nextArea = {nextArea}
+
+                    type = "circle"
+                >
+                </Square>);
+                count++;
+            }
+        }
+        return circles;
     }
 
     return(
@@ -176,21 +224,22 @@ export default function TouchPad(props)
             {/* {getSquares} */}
             {/* {renderThis} */}
             {squares}
+            {circles}
             {/* <Text>Touchpad Here</Text> */}
         </View>
     )
 }
 
-function DisplayCoordinates(props)
-{
-    return(
-        <View>
-            <Text style={styles.coord}>Global: X {Math.round(props.x)} Y {Math.round(props.y)}</Text>
-            <Text style={styles.coord}>Local: A {Math.round(props.a)} B {Math.round(props.b)}</Text>
-            <Text style={styles.coord}>SCREEN: {Math.round(WIDTH)} * {Math.round(HEIGHT)}</Text>
-        </View>
-    )
-}
+// function DisplayCoordinates(props)
+// {
+//     return(
+//         <View>
+//             <Text style={styles.coord}>Global: X {Math.round(props.x)} Y {Math.round(props.y)}</Text>
+//             <Text style={styles.coord}>Local: A {Math.round(props.a)} B {Math.round(props.b)}</Text>
+//             <Text style={styles.coord}>SCREEN: {Math.round(WIDTH)} * {Math.round(HEIGHT)}</Text>
+//         </View>
+//     )
+// }
 
 //return id of "area" currently on (1-9, a-d, or -1 (outide)) based on point = {x, y}
 function getArea(point)

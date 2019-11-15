@@ -5,17 +5,6 @@ export function test()
     console.log('test');
 }
 
-//TODO this
-//instead of centerpoint/radius pass a square object?
-export function isOnSquare(point, center, radius)
-{
-}
-
-//TODO
-export function isOnCircle(point, center, radius){
-
-}
-
 //returns distance between two points
 export function getDistance(a, b)
 {
@@ -26,8 +15,11 @@ export function getDistance(a, b)
 //are both points equal?
 export function isEquals(a, b)
 {
-
-
+    if ((a.x == b.x)&&(a.y == b.y))
+    {
+        return (true);
+    }
+    return (false);
 }
 
 //how much to push from the left or top
