@@ -19,23 +19,31 @@ const numberOfCharacters = keys.length;
 
 //returns next step
 //0.0 if done!
+//returns this: [status, stroke object}]
 export function getNextStep(lastStep, strokeLength, numberOfStrokes)
 {
     if (lastStep.stroke >= strokeLength)
     {
         if (lastStep.strokeStep >= numberOfStrokes)
         {
-            return null;
+            //CHARACTER SUCCESS
+            return (2, {stroke: lastStep.stroke, strokeSTep: lastStep.strokeStep});
         }
-        return ({
+        //SAME STROKE
+        return ([
+            1,
+            {
             stroke: (lastStep.stroke + 1),
             strokeStep: 0,
-        })
+        }])
     }
-    return({
+    //NEW STROKE
+    return([
+        2,
+        {
         stroke: lastStep.stroke,
         strokeStep: (lastStep.strokeStep + 1),
-    })
+    }])
 }
 
 //returns random character stroke

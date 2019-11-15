@@ -82,22 +82,24 @@ export default function shape(props)
     {
         //TODO check type first before starting!!!
         // check if on area, update setArea accordingly
+        console.log("tryp update")
         if ((left < props.locX) && (props.locX < (left + (2*radius)))
         && ((top + (.2*HEIGHT)) < props.locY) && (props.locY < ((top + (.2*HEIGHT)) + (2*radius))))
         {
             setOnArea(props.id);
+            console.log("area updated");
+
             // setOnArea("left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
         }
-        else if (area === props.id)
+        else if (area == props.id)
         {
             setOnArea(0);
+            //setOnArea("0  left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
+
         }
-        // setOnArea("left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
 
-
-        
-    }, [locX, locY]);
-
+    },[locX, locY, props.updateArea] );
+//[locX, locY, props.updateArea]
     useEffect(() => {
         if (props.nextArea == props.id)
         {
@@ -111,7 +113,7 @@ export default function shape(props)
         {
             setColor({square: "blue", circle: "red"});
         }
-    }, [area]);
+    }, [props.nextArea, props.lastArea]);
 
     
     //returns a view containing a single square

@@ -33,10 +33,12 @@ export default function App() {
   //EXPECTED
   //ID of the characterstep we expect char step [stroke, step of stroke]
   // const [nextStep, setNextStep] = useState([0, 0]);
-  const [nextStep, setNextStep] = useState({stroke: 0, strokeStep: 1});
+  const [nextStep, setNextStep] = useState({stroke: 0, strokeStep: 0});
 
   //corresponding area
-  const [nextArea, setNextArea] = useState(2);
+  const [nextArea, setNextArea] = useState(1);
+
+  const [failedStroke, setFailedStroke] = useState(false);
   
   //run the pattern checker
 
@@ -46,10 +48,51 @@ export default function App() {
   //the new steps [old, new]
   var newSteps = [];
 
-  useEffect(() => {
-    if (onArea == nextArea)
+  // useEffect(() => {
+  //   if (onArea == nextArea)
+  //   {
+  //     updateSteps();
+  //   }
+  //   else
+  //   {
+  //     if (onArea == 0 || onArea == lastArea)
+  //     {
+  //       //do nothing
+  //     }
+  //     //fail! wrong move!
+  //   }   
+  // }, [onArea, lastStep]);
+
+
+  //update if:
+  //not the first one
+  //last one?
+  //INPUT: [newLastStep, newNextStep]
+  function updateSteps(newSteps)
+  {   
+      setLastStep(newSteps[0]);
+      setNextStep(newSteps[1]);
+      setLastArea(charPattern[newSteps[0].stroke][newSteps[0].strokeStep]);
+      setNextArea(charPattern[newSteps[1].stroke][newSteps[1].strokeStep]);
+      console.log("update steps");
+
+      //check if complete?
+  }
+
+  function onTouchMove()
+  {
+    if (onArea == nextArea && failedStroke == false)
     {
-      updateSteps();
+      var newStep = teacher.getNextStep(lastStep, charPattern[lastStep.stroke].length, charPattern[0].length);
+      if (newStep[0] == 0)
+      {
+        updateSteps([nextStep, newStep[1]]);
+      }
+      else
+      {
+        updateSteps([nextStep, newStep[1]]);
+
+      }
     }
     else
     {
@@ -57,25 +100,71 @@ export default function App() {
       {
         //do nothing
       }
+      else
+      {
+        onStrokeFail();
+
+      }
       //fail! wrong move!
     }   
-  }, [onArea, lastStep]);
-
-
-  function updateSteps()
-  {
-    newSteps = [nextStep, teacher.getNextStep(lastStep, charPattern[lastStep.stroke].length, charPattern[0].length)];
-      setLastStep(newSteps[0]);
-      setNextStep(newSteps[1]);
-      setLastArea(charPattern[newSteps[0].stroke][newSteps[0].strokeStep]);
-      setNextArea(charPattern[newSteps[1].stroke][newSteps[1].strokeStep]);
-      //check if complete?
   }
 
-  
-  function resetSteps()
+  //when touch starts
+  //check if area = nextArea
+  //if not then reset
+  //should I start a stroke?
+  function onTouchStart()
   {
+    setFailedStroke(false);
 
+    if (onArea == nextArea)
+    {
+      onTouchMove();
+    }
+    else
+    {
+      if (onArea != 0)
+        onStrokeFail();
+    }
+  }
+
+  function onTouchStop()
+  {
+    //are we on the last one?
+
+    //NO? => strok fail!
+    onStrokeFail();
+  }
+
+  //SUCESS when:
+  //Hit the last point of a stroke
+  //Finger Lifted
+  function onStrokeSuccess()
+  {
+    console.log("Stroke Success");
+  }
+  //Called when FAIL:
+  //2 conditions:
+  //- hits the wrong node
+  //- finger is lifted up 
+  function onStrokeFail()
+  {
+    //stroke fail feedback
+    //reset character
+    console.log("Stroke Fail");
+    setFailedStroke(true);
+    setLastStep({stroke: 0, strokeStep: 0});
+    setNextStep({stroke: 0, strokeStep: 0});
+    updateSteps([
+      {stroke: 0, strokeStep: 0},
+      {stroke: 0, strokeStep: 0}
+    ])
+  }
+
+  function onCharSuccess()
+  {
+    //next character
+    console.log("Character Success");
   }
 
   return (
@@ -92,6 +181,9 @@ export default function App() {
         lastArea = {lastArea}
         nextArea = {nextArea}
 
+        onTouchStart = {onTouchStart}
+        onTouchMove = {onTouchMove}
+        onTouchStop = {onTouchStop}
       >
       </TouchPad>
 

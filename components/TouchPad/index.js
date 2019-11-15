@@ -1,13 +1,17 @@
 import * as helper from '../helper';
+import * as teacher from '../teacher';
 
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Dimensions, PanResponder, Vibration } from 'react-native';
 import Square from './square';
 import { getNextStep } from '../teacher';
 
+//TOUCHPAD:
+//manage logic, testing related to inputs!
+
 
 //how much range should gestures be detected within center point
-const RADIUS_SQUARE = 35 ;
+const RADIUS_SQUARE = 35;
 const RADIUS_CIRCLE = 15;
 
 const WIDTH = Dimensions.get('window').width;
@@ -22,10 +26,8 @@ const WIDTH_TOUCHPAD = WIDTH;
 
 export default function TouchPad(props)
 {
-
     var lastArea = props.lastArea;
     var nextArea = props.nextArea;
-
 
     //relative to root
     const [locX, setLocX] = useState(0);
@@ -45,6 +47,9 @@ export default function TouchPad(props)
     const [width, setWidth] = useState(WIDTH);
     const [height, setHeight] = useState(HEIGHT);
 
+    //trigger area update by changing this state variable!
+    const [updateArea, setUpdateArea] = useState(0);
+
     //are we currently touching square?
     //const [onArea, setOnArea] = useState(0);
     var onArea = props.onArea;
@@ -61,23 +66,28 @@ export default function TouchPad(props)
           // The gesture has started. Show visual feedback so the user knows
           // what is happening!
           // gestureState.d{x,y} will be set to zero now
+          console.log('started');
           onStart(evt,gestureState);
         },
         onPanResponderMove: (evt, gestureState) => {
           // The most recent move distance is gestureState.move{X,Y}
           // The accumulated gesture distance since becoming responder is
           // gestureState.d{x,y}
+
+          
           onMove(evt, gestureState);
         },
         onPanResponderTerminationRequest: (evt, gestureState) => true,
         onPanResponderRelease: (evt, gestureState) => {
           // The user has released all touches while this view is the
           // responder. This typically means a gesture has succeeded
+          props.onTouchStop();
           onEnd(evt,gestureState);
         },
         onPanResponderTerminate: (evt, gestureState) => {
           // Another component has become the responder, so this gesture
           // should be cancelled
+          props.onTouchStop();
         },
         onShouldBlockNativeResponder: (evt, gestureState) => {
           // Returns whether this component should block native components from becoming the JS
@@ -90,7 +100,8 @@ export default function TouchPad(props)
     //gesture events (start of gesture, moving of gesture, end of gesture)
     function onStart(e, g)
     {
-
+        setUpdateArea(updateArea+1);
+        props.onTouchStart();
     }
 
     function onMove(e, g)
@@ -107,6 +118,8 @@ export default function TouchPad(props)
         setLocA(a);
         setLocB(b);
 
+        props.onTouchMove();
+
         //check if current touch on a vibration one, then feedback
     }
 
@@ -119,6 +132,7 @@ export default function TouchPad(props)
     function onEnd(e, g)
     {
 
+        // props.onTouchStop();
     }
     
     //update the state of the squares
@@ -159,6 +173,8 @@ export default function TouchPad(props)
                     nextArea = {nextArea}
 
                     type = "square"
+
+                    updateArea = {updateArea}
                 >
                 </Square>);
                 count++;
@@ -198,6 +214,8 @@ export default function TouchPad(props)
                     nextArea = {nextArea}
 
                     type = "circle"
+
+                    updateArea = {updateArea}
                 >
                 </Square>);
                 count++;
