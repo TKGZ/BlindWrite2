@@ -1,7 +1,7 @@
 import * as helper from '../helper';
 
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, Dimensions, PanResponder } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { StyleSheet, Text, View, Dimensions, PanResponder, Vibration } from 'react-native';
 import Square from './square';
 
 
@@ -18,7 +18,7 @@ const SQUARES_PER_COL = 3;
 const HEIGHT_TOUCHPAD = Math.round(0.8*HEIGHT);
 const WIDTH_TOUCHPAD = WIDTH;
 
-export default function TouchPad()
+export default function TouchPad(props)
 {
 
     //relative to root
@@ -38,6 +38,11 @@ export default function TouchPad()
     const [layoutY, setLayoutY] = useState(0);
     const [width, setWidth] = useState(WIDTH);
     const [height, setHeight] = useState(HEIGHT);
+
+    //are we currently touching square?
+    //const [onArea, setOnArea] = useState(0);
+    var onArea = props.onArea;
+    var setOnArea = props.setOnArea;
     
     _panResponder = PanResponder.create({
         // Ask to be the responder:
@@ -85,15 +90,23 @@ export default function TouchPad()
     function onMove(e, g)
     {
         x =  e.nativeEvent.pageX;
-          y = e.nativeEvent.pageY;
-          a = e.nativeEvent.locationX;
-          b = e.nativeEvent.locationY;
-  
-          //tryVibration(evt);
-          setLocX(x);
-          setLocY(y);
-          setLocA(a);
-          setLocB(b);
+        y = e.nativeEvent.pageY;
+        a = e.nativeEvent.locationX;
+        b = e.nativeEvent.locationY;
+
+        //tryVibration(evt);
+        setLocX(x);
+        setLocY(y);
+
+        setLocA(a);
+        setLocB(b);
+
+        //check if current touch on a vibration one, then feedback
+    }
+
+    function feedbackTouch(type = 1)
+    {
+        Vibration.vibrate(100);
     }
 
     //TODO
@@ -101,8 +114,49 @@ export default function TouchPad()
     {
 
     }
+    
+    //update the state of the squares
+    useEffect(() => {
+        setSquares(getSquares());
 
-    var renderThis = getSquares();
+        //check if current touch on what type, then vibrate
+    })
+
+    //generates enough squares to fill out everything!
+    function getSquares(rows = SQUARES_PER_ROW, cols = SQUARES_PER_COL)
+    {
+        var squares = [];
+        var count = 1;
+        for (var i = 0; i < rows; i++)
+        {
+            for (var j = 0; j< cols; j++)
+            {
+                squares.push(<Square
+                    key = {count}
+                    id = {count}
+
+                    positionX = {j}
+                    positionY = {i}
+                    radius = {RADIUS}
+                    elementsPerRow = {SQUARES_PER_ROW}
+                    elementsPerCol = {SQUARES_PER_COL}
+                    parentHeight = {HEIGHT_TOUCHPAD}
+                    parentWidth = {WIDTH_TOUCHPAD}
+
+                    // for determining which area we are currently on
+                    area = {onArea}
+                    setOnArea = {setOnArea}
+                    locX = {locX}
+                    locY = {locY}
+
+                    type = "square"
+                >
+                </Square>);
+                count++;
+            }
+        }
+        return squares;
+    }
 
     return(
         <View
@@ -120,7 +174,8 @@ export default function TouchPad()
                 b={locB}
             ></DisplayCoordinates> */}
             {/* {getSquares} */}
-            {renderThis}
+            {/* {renderThis} */}
+            {squares}
             {/* <Text>Touchpad Here</Text> */}
         </View>
     )
@@ -143,39 +198,13 @@ function getArea(point)
     return (1);
 }
 
-//generates enough squares to fill out everything!
-function getSquares(rows = SQUARES_PER_ROW, cols = SQUARES_PER_COL)
-{
-    var squares = [];
-    for (var i = 0; i < rows; i++)
-    {
-        for (var j = 0; j< cols; j++)
-        {
-            squares.push(<Square
-                key = {(10*i + j)}
-
-                positionX = {i}
-                positionY = {j}
-                radius = {RADIUS}
-                elementsPerRow = {SQUARES_PER_ROW}
-                elementsPerCol = {SQUARES_PER_COL}
-                parentHeight = {HEIGHT_TOUCHPAD}
-                parentWidth = {WIDTH_TOUCHPAD}
-
-                type = "square"
-            >
-            </Square>);
-        }
-    }
-    return squares;
-}
-
 const styles = StyleSheet.create({
 
     coord: {
         fontSize: 10,
         color: 'blue',
     },
+
     surface: {
         backgroundColor: 'orange',
        // flex: 1,

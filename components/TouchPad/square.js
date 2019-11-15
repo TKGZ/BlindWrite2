@@ -1,7 +1,7 @@
 //renders a square 
 
 import * as helper from '../helper';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 
 const WIDTH = Dimensions.get('window').width;
@@ -13,11 +13,24 @@ export default function shape(props)
 
     var positionX = props.positionX;
     var positionY = props.positionY;
+
     var elementsPerRow = props.elementsPerRow;
     var elementsPerCol = props.elementsPerCol;
     var radius = props.radius;
     var parentWidth = props.parentWidth;
     var parentHeight = props.parentHeight;
+
+
+    //for detecting which area we are on
+    //i.e is my touch currently on this area?
+    var area = props.area;
+    var setOnArea = props.setOnArea;
+    var locX = props.locX;
+    var locY = props.locY;
+    var id = props.id;
+
+    //type of shape (either square or circle)
+    var type = props.type;
 
     //calculate how much to push the object
     var left = helper.getSpaceInterval(positionX, elementsPerRow, radius, parentWidth);
@@ -33,9 +46,55 @@ export default function shape(props)
         left: left,
     }
 
+    styles = StyleSheet.create({
+        square: {
+            backgroundColor: 'blue',
+            position: "absolute",
+            width: (radius*2),
+            height: (radius*2),
+            top: top,
+            left: left,
+        },
+        circle: {
+            backgroundColor: 'red',
+            position: "absolute",
+            width: (radius*2),
+            height: (radius*2),
+            borderRadius: radius,
+            top: top,
+            left: left,
+        },
+    })  
+    
+    //pick a style to show
+    var currentStyle = styles.circle;
+
+    useEffect(() => 
+    {
+
+
+        //TODO check type first before starting!!!
+        // check if on area, update setArea accordingly
+        if ((left < props.locX) && (props.locX < (left + (2*radius)))
+        && ((top + (.2*HEIGHT)) < props.locY) && (props.locY < ((top + (.2*HEIGHT)) + (2*radius))))
+        {
+            setOnArea(props.id);
+            // setOnArea("left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
+        }
+        else if (area === props.id)
+        {
+            setOnArea(0);
+        }
+
+        // setOnArea("left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
+
+    });
+
     //returns a view containing a single square
     return(
         <View style={squareStyle}>
         </View>
     );
 }
+
+
