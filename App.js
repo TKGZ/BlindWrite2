@@ -14,6 +14,7 @@ export default function App() {
   const [onArea, setOnArea] = useState(0);
   //by default teacher is on
   const [teachingMode, setTeachingMode] = useState(true);
+
   //name of character we are writing
   const [charName, setCharName] = useState('a');
   //array description of how it is to be written
@@ -22,21 +23,18 @@ export default function App() {
   // const [charPattern, setCharPattern] = useState([[7,2,9],[4,6]]);
   const [charPattern, setCharPattern] = useState([[1,2,3,6,5,4,7,8,9]]);
 
+  const [endOfStroke, setEndOfStroke] = useState(false);
+  const [endOfCharacter, setEndOfCharacter] = useState(false);
+  
+  const startPoint = helper.createPoint(0,0);
+  const startNext = helper.createPoint(0, 1);
 
-  //last inputed step [strokeID, char id]
-  //[-1, -1] means nothing inputed yet
-  // const [lastStep, setLastStep] = useState([-1, -1]);
-  const [lastStep, setLastStep] = useState({stroke: 0, strokeStep: 0})
-  //corresponding area
+  //POINTS
+  const [lastPoint, setLastPoint] = useState(startPoint);
+  const [nextPoint, setNextPoint] = useState(startNext);
+  //AREAS (Correspondingly)
   const [lastArea, setLastArea] = useState(1);
-
-  //EXPECTED
-  //ID of the characterstep we expect char step [stroke, step of stroke]
-  // const [nextStep, setNextStep] = useState([0, 0]);
-  const [nextStep, setNextStep] = useState({stroke: 0, strokeStep: 0});
-
-  //corresponding area
-  const [nextArea, setNextArea] = useState(1);
+  const [nextArea, setNextArea] = useState(2);
 
   const [failedStroke, setFailedStroke] = useState(false);
   
@@ -48,80 +46,54 @@ export default function App() {
   //the new steps [old, new]
   var newSteps = [];
 
-  // useEffect(() => {
-  //   if (onArea == nextArea)
-  //   {
-  //     updateSteps();
-  //   }
-  //   else
-  //   {
-  //     if (onArea == 0 || onArea == lastArea)
-  //     {
-  //       //do nothing
-  //     }
-  //     //fail! wrong move!
-  //   }   
-  // }, [onArea, lastStep]);
+  function updatePoints(newPoint)
+  {
+    var newLastPoint = nextPoint;
+    setNextPoint(newPoint);
+    setLastPoint(newLastPoint);
 
-
-  //update if:
-  //not the first one
-  //last one?
-  //INPUT: [newLastStep, newNextStep]
-  function updateSteps(newSteps)
-  {   
-      setLastStep(newSteps[0]);
-      setNextStep(newSteps[1]);
-      setLastArea(charPattern[newSteps[0].stroke][newSteps[0].strokeStep]);
-      setNextArea(charPattern[newSteps[1].stroke][newSteps[1].strokeStep]);
-      console.log("update steps");
-
-      //check if complete?
+    setLastArea(charPattern[lastPoint.stroke][lastPoint.step]);
+    setNextArea(charPattern[nextPoint.stroke][nextPoint.step])
   }
 
-  function onTouchMove()
+  function onTouchMove(values)
   {
+    var newPoint;
     if (onArea == nextArea && failedStroke == false)
     {
-      var newStep = teacher.getNextStep(lastStep, charPattern[lastStep.stroke].length, charPattern[0].length);
-      if (newStep.type == 0)
+      var nextStep = teacher.getNextStep(nextPoint, charPattern)
+      if (nextStep == null)
       {
-        // console.log("Mid-stroke step");
-        updateSteps([nextStep, newStep.step]);
-      }
-      else if (newStep.type == 1)
-      {
-        onStrokeSuccess();
-        //newSTROKE
-        updateSteps([nextStep, newStep.step]);
-
-      } else if (newStep.type == 2)
-      {
-        //character is done!!
-        //check if still no final area!
-
-        // updateSteps([nextStep, newStep.step])
-        onCharSuccess();
-      }
-    }
-    else
-    {
-      if (onArea == 0 || onArea == lastArea)
-      {
-        //do nothing
+        setEndOfStroke(true);
+        var nextStroke = teacher.getNextStroke(nextPoint, charPattern);
+        if (nextStroke == null)
+        {
+          setEndOfCharacter(true);
+        }
+        else
+        {
+          newPoint = helper.createPoint(nextStroke, 0);
+        }
+        //set the nextPoint to the last point!
+        updatePoints(lastPoint);
       }
       else
       {
-        onStrokeFail();
+        //increment the point by one!
+        newPoint = helper.createPoint(nextPoint.stroke, nextStep);
       }
-      //fail! wrong move!
-    }   
+      updatePoints(newPoint);
+    }
+    else if (onArea == 0 || onArea == lastArea)
+    {
+      //original area or empty area => do nothing
+    }
+    else
+    {
+      onStrokeFail();
+    }
   }
 
-  //when touch starts
-  //check if area = nextArea
-  //if not then reset
-  //should I start a stroke?
   function onTouchStart()
   {
     setFailedStroke(false);
@@ -140,16 +112,31 @@ export default function App() {
   function onTouchStop()
   {
     //are we on the last one?
-
-    //NO? => strok fail!
+    if (endOfCharacter)
+    {
+      onCharSuccess();
+    }
+    else if (endOfStroke)
+    {
+      onStrokeSuccess();
+    }
+    //we have not reached the end, so we fail!
     onStrokeFail();
   }
 
   //SUCESS when:
   //Hit the last point of a stroke
   //Finger Lifted
+  //THEN switch to the next stroke!
   function onStrokeSuccess()
   {
+    setEndOfStroke(false);
+    setEndOfCharacter(false);
+
+    var newPoint = helper.createPoint(teacher.getNextStroke(nextPoint, charPattern), 0);
+    updatePoints(newPoint);
+
+    //TODO update to the next stroke!
     console.log("Stroke Success");
   }
   //Called when FAIL:
@@ -161,18 +148,25 @@ export default function App() {
     //stroke fail feedback
     //reset character
     console.log("Stroke Fail");
+    setEndOfCharacter(false);
+    setEndOfStroke(false);
+
     setFailedStroke(true);
-    setLastStep({stroke: 0, strokeStep: 0});
-    setNextStep({stroke: 0, strokeStep: 0});
+
+    setNextPoint(startPoint);
+    updatePoints(nextPoint);
+
     updateSteps([
-      {stroke: 0, strokeStep: 0},
-      {stroke: 0, strokeStep: 0}
+      {stroke: 0, subStroke: 0},
+      {stroke: 0, subStroke: 0}
     ])
   }
 
+  //when hit last point of last stroke and lift the finger not on another character
+  //THEN: switch to the next character
   function onCharSuccess()
   {
-    //next character
+    //TODO update to the next character!
     console.log("Character SUCCESS");
   }
 

@@ -36,3 +36,12 @@ export function getSpaceInterval(index, numberOfElements, radius, length)
     return ((index) * (length -  2*radius)/(numberOfElements - 1));
 }
 
+export function createPoint(a, b)
+{
+    return (
+        {
+            stroke: a,
+            step: b,
+        }
+    )
+}
