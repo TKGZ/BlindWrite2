@@ -53,7 +53,7 @@ export default function App() {
     setLastPoint(newLastPoint);
 
     setLastArea(charPattern[lastPoint.stroke][lastPoint.step]);
-    setNextArea(charPattern[nextPoint.stroke][nextPoint.step])
+    setNextArea(charPattern[nextPoint.stroke][nextPoint.step]);
   }
 
   function onTouchMove(values)
@@ -111,7 +111,7 @@ export default function App() {
 
   function onTouchStop()
   {
-    //are we on the last one?
+    console.log("on touch stop")
     if (endOfCharacter)
     {
       onCharSuccess();
@@ -120,8 +120,11 @@ export default function App() {
     {
       onStrokeSuccess();
     }
+    else
+    {
+      onStrokeFail();
+    }
     //we have not reached the end, so we fail!
-    onStrokeFail();
   }
 
   //SUCESS when:
@@ -134,7 +137,9 @@ export default function App() {
     setEndOfCharacter(false);
 
     var newPoint = helper.createPoint(teacher.getNextStroke(nextPoint, charPattern), 0);
-    updatePoints(newPoint);
+    var newSecondPoint = helper.createPoint(teacher.getNextStep(newPoint, charPattern), 0);
+    setNextPoint(newPoint);
+    updatePoints(newSecondPoint);
 
     //TODO update to the next stroke!
     console.log("Stroke Success");
@@ -153,13 +158,21 @@ export default function App() {
 
     setFailedStroke(true);
 
-    setNextPoint(startPoint);
-    updatePoints(nextPoint);
+    resetPoints();
+  }
 
-    updateSteps([
-      {stroke: 0, subStroke: 0},
-      {stroke: 0, subStroke: 0}
-    ])
+  //reset points and their areas to the first two elements of the character!
+  function resetPoints()
+  {
+    setLastPoint(startPoint);
+    setNextPoint(startNext);
+    updateAreasFromPoints();    
+  }
+
+  function updateAreasFromPoints()
+  {
+    setLastArea(charPattern[lastPoint.stroke][lastPoint.step]);
+    setNextArea(charPattern[nextPoint.stroke][nextPoint.step]);
   }
 
   //when hit last point of last stroke and lift the finger not on another character

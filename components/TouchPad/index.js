@@ -81,13 +81,13 @@ export default function TouchPad(props)
         onPanResponderRelease: (evt, gestureState) => {
           // The user has released all touches while this view is the
           // responder. This typically means a gesture has succeeded
-          props.onTouchStop();
+
           onEnd(evt,gestureState);
         },
         onPanResponderTerminate: (evt, gestureState) => {
           // Another component has become the responder, so this gesture
           // should be cancelled
-          props.onTouchStop();
+        //   props.onTouchStop();
         },
         onShouldBlockNativeResponder: (evt, gestureState) => {
           // Returns whether this component should block native components from becoming the JS
@@ -131,8 +131,7 @@ export default function TouchPad(props)
     //TODO
     function onEnd(e, g)
     {
-
-        // props.onTouchStop();
+        props.onTouchStop();
     }
     
     //update the state of the squares
