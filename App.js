@@ -24,7 +24,7 @@ export default function App() {
 
   //by default it is the empty pattern
   // const [charPattern, setCharPattern] = useState([[7,2,9],[4,6]]);
-  const [charPattern, setCharPattern] = useState([[1,2,3,6,5,4,7,8,9],[2,5,7]]);
+  const [charPattern, setCharPattern] = useState([[1,2,"b",5,4,5,"d",8,7],[1,4,7]]);
 
   const [endOfStroke, setEndOfStroke] = useState(false);
   const [endOfCharacter, setEndOfCharacter] = useState(false);
@@ -101,7 +101,7 @@ export default function App() {
     setFailedStroke(false);
 
     //TODO fix this temporary error
-    setOnArea(0);
+    
 
     console.log("on touch start")
     if (onArea == nextArea || onArea == lastArea)
@@ -120,8 +120,13 @@ export default function App() {
   function onTouchStop()
   {
     //console.log("on touch stop")
+    setOnArea(0);
+
     setLocX(-1);
     setLocY(-1);
+    setOnArea(0);
+
+
     if (endOfCharacter)
     {
       onCharSuccess();

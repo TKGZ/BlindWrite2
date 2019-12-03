@@ -86,11 +86,10 @@ export default function shape(props)
             // console.log("update area");
             setOnArea(0);
             //setOnArea("0  left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
-
         }
 
-    },[locX, locY, props.updateArea, props.endOfStroke] );
-//[locX, locY, props.updateArea]
+    },[locX, locY] );
+//[locX, locY, props.updateArea], props.updateArea, props.endOfStroke
     useEffect(() => {
         if (props.nextArea == props.id)
         {
