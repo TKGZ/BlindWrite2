@@ -45,3 +45,39 @@ export function createPoint(a, b)
         }
     )
 }
+
+//TODO improve this function
+export function isValidPoint(point)
+{
+    if (point === undefined || point.stroke == null || point.step == null)
+    {
+        return false;
+    }
+    if (Number.isInteger(point.stroke) && Number.isInteger(point.step))
+    {
+        return true;
+    }
+    return false;
+}
+
+export function printPoint(point, pre = "")
+{
+    if (!isValidPoint(point))
+    {
+        console.log(pre + ": invlalid point, not print")
+    }
+    else
+    {
+        console.log(pre + ": " + point.stroke + "," + point.step);
+    }
+    
+}
+
+
+//function prototype object constructor
+//use newobject = new Point(123,2 3123); or something
+export function Point(stroke, step)
+{
+    this.stroke = stroke;
+    this.step = step;
+}

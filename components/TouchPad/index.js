@@ -30,8 +30,13 @@ export default function TouchPad(props)
     var nextArea = props.nextArea;
 
     //relative to root
-    const [locX, setLocX] = useState(0);
-    const [locY, setLocY] = useState(0);
+    // const [locX, setLocX] = useState(0);
+    // const [locY, setLocY] = useState(0);
+
+    var locX = props.locX;
+    var setLocX = props.setLocX;
+    var locY = props.locY;
+    var setLocY = props.setLocY;
 
     //relative to element
     const [locA, setLocA] = useState(0);
@@ -119,7 +124,6 @@ export default function TouchPad(props)
         setLocB(b);
 
         props.onTouchMove();
-
         //check if current touch on a vibration one, then feedback
     }
 
@@ -174,6 +178,8 @@ export default function TouchPad(props)
                     type = "square"
 
                     updateArea = {updateArea}
+
+                    endOfStroke = {props.endOfStroke}
                 >
                 </Square>);
                 count++;
@@ -215,6 +221,8 @@ export default function TouchPad(props)
                     type = "circle"
 
                     updateArea = {updateArea}
+
+                    endOfStroke = {props.endOfStroke}
                 >
                 </Square>);
                 count++;
@@ -232,36 +240,12 @@ export default function TouchPad(props)
         {..._panResponder.panHandlers}
         style={styles.surface}
         >
-            {/* <DisplayCoordinates
-                x={locX}
-                y={locY}
-                a={locA}
-                b={locB}
-            ></DisplayCoordinates> */}
-            {/* {getSquares} */}
-            {/* {renderThis} */}
+
             {squares}
             {circles}
-            {/* <Text>Touchpad Here</Text> */}
+
         </View>
     )
-}
-
-// function DisplayCoordinates(props)
-// {
-//     return(
-//         <View>
-//             <Text style={styles.coord}>Global: X {Math.round(props.x)} Y {Math.round(props.y)}</Text>
-//             <Text style={styles.coord}>Local: A {Math.round(props.a)} B {Math.round(props.b)}</Text>
-//             <Text style={styles.coord}>SCREEN: {Math.round(WIDTH)} * {Math.round(HEIGHT)}</Text>
-//         </View>
-//     )
-// }
-
-//return id of "area" currently on (1-9, a-d, or -1 (outide)) based on point = {x, y}
-function getArea(point)
-{
-    return (1);
 }
 
 const styles = StyleSheet.create({

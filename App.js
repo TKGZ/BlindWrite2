@@ -19,6 +19,9 @@ export default function App() {
   const [charName, setCharName] = useState('a');
   //array description of how it is to be written
 
+  const [locX, setLocX] = useState(0);
+  const [locY, setLocY] = useState(0);
+
   //by default it is the empty pattern
   // const [charPattern, setCharPattern] = useState([[7,2,9],[4,6]]);
   const [charPattern, setCharPattern] = useState([[1,2,3,6,5,4,7,8,9],[2,5,7]]);
@@ -27,7 +30,7 @@ export default function App() {
   const [endOfCharacter, setEndOfCharacter] = useState(false);
   
   const startPoint = helper.createPoint(0,0);
-  const startNext = helper.createPoint(0, 0);
+  const startNext = helper.createPoint(0,0);
 
   //POINTS
   const [lastPoint, setLastPoint] = useState(startPoint);
@@ -49,10 +52,10 @@ export default function App() {
   function updatePoints(newPoint)
   {
     var newLastPoint = nextPoint;
-    setNextPoint(newPoint);
     setLastPoint(newLastPoint);
+    setNextPoint(newPoint);
 
-    updateAreasFromPoints();
+    updateAreasFromPoints(newLastPoint, newPoint);
   }
 
   function onTouchMove(values)
@@ -68,13 +71,13 @@ export default function App() {
         if (nextStroke == null)
         {
           setEndOfCharacter(true);
+          console.log("MOVE: end of character (AND stroke)")
         }
         else
         {
-          //newPoint = helper.createPoint(nextPoint.stroke + 1, 0);
-          //console.log("NEW POINT for next stroke " + newPoint.stroke + " " + newPoint.step)
-          console.log("end of stroke but not of character");
+          console.log("MOVE: end of stroke but not of character");
         }
+         
       }
       else
       {
@@ -89,7 +92,7 @@ export default function App() {
     }
     else
     {
-      onStrokeFail();
+      onStrokeFail("wrong area on " + onArea + " | lastArea: "  + lastArea + " | nextArea: " + nextArea);
     }
   }
 
@@ -97,20 +100,28 @@ export default function App() {
   {
     setFailedStroke(false);
 
-    if (onArea == nextArea)
+    //TODO fix this temporary error
+    setOnArea(0);
+
+    console.log("on touch start")
+    if (onArea == nextArea || onArea == lastArea)
     {
+      // console.log("on area")
       onTouchMove();
     }
     else
     {
+      // console.log("not on area")
       if (onArea != 0)
-        onStrokeFail();
+        onStrokeFail("wrong start on " + onArea + " | lastArea: "  + lastArea + " | nextArea: " + nextArea);
     }
   }
 
   function onTouchStop()
   {
-    console.log("on touch stop")
+    //console.log("on touch stop")
+    setLocX(-1);
+    setLocY(-1);
     if (endOfCharacter)
     {
       onCharSuccess();
@@ -121,27 +132,30 @@ export default function App() {
     }
     else
     {
-      onStrokeFail();
+      onStrokeFail("touch stop on neither end of stroke/char");
     }
     //we have not reached the end, so we fail!
   }
 
+  //end of stroke but not end of character!
   //SUCESS when:
   //Hit the last point of a stroke
   //Finger Lifted
   //THEN switch to the next stroke!
   function onStrokeSuccess()
   {
-    setEndOfStroke(false);
-    setEndOfCharacter(false);
-
+    
     //TODO fix this
-    var newPoint = helper.createPoint(nextPoint.stroke + 1, 0);
+    var newPoint = helper.createPoint(lastPoint.stroke + 1, 0);
     
     setLastPoint(newPoint);
     setNextPoint(newPoint);
-    updateAreasFromPoints();
+    updateAreasFromPoints(newPoint, newPoint);
 
+    setEndOfStroke(false);
+    setEndOfCharacter(false);
+
+    setOnArea(0);
     console.log("Stroke Success, switch to next stroke");
   }
 
@@ -149,11 +163,11 @@ export default function App() {
   //2 conditions:
   //- hits the wrong node
   //- finger is lifted up 
-  function onStrokeFail()
+  function onStrokeFail(reason = "")
   {
     //stroke fail feedback
     //reset character
-    console.log("Stroke Fail");
+    console.log("Stroke Fail because " + reason);
     setEndOfCharacter(false);
     setEndOfStroke(false);
 
@@ -167,37 +181,43 @@ export default function App() {
   {
     setLastPoint(startPoint);
     setNextPoint(startNext);
-    updateAreasFromPoints();    
+    console.log("reseting points: ");
+    helper.printPoint(startPoint);
+    helper.printPoint(startNext);
+    updateAreasFromPoints(startPoint, startNext);
   }
 
-  function updateAreasFromPoints()
+  //explicitally input the points to ensure that they update after!
+  //a for last point
+  //b for next point
+  function updateAreasFromPoints(a, b)
   {
-    //check if on any of the last stages
-    console.log("nextPoint udpating to area of " + nextPoint.stroke + " " + nextPoint.step);
-    
-    if (lastPoint.stroke === null || lastPoint.step === null)
+    // console.log("updating from points" );
+    // helper.printPoint(a, "a");
+    // helper.printPoint(b, "b");
+
+    if (helper.isValidPoint(a))
     {
-      console.log("invalid last point update")
+      setLastArea(charPattern[a.stroke][a.step]);
+    }
+    else
+    {
       setLastArea(-1);
     }
+    
+    if (helper.isValidPoint(b))
+    {
+      setNextArea(charPattern[b.stroke][b.step]);
+    }
     else
     {
-      setLastArea(charPattern[lastPoint.stroke][lastPoint.step]);
-
-    }
-    if (nextPoint.stroke === null || nextPoint.step === null)
-    {
-      console.log("invalid next point update")
       setNextArea(-1);
-    }
-    else
-    {
-      setNextArea(charPattern[nextPoint.stroke][nextPoint.step]);
     }
   }
 
   //when hit last point of last stroke and lift the finger not on another character
   //THEN: switch to the next character
+  
   function onCharSuccess()
   {
     //TODO update to the next character!
@@ -208,6 +228,9 @@ export default function App() {
     <View style={styles.container}>
       <TempControlPad
         onArea = {onArea}
+
+        locX = {locX}
+        locY = {locY}
       >
 
       </TempControlPad>
@@ -215,12 +238,19 @@ export default function App() {
         onArea = {onArea}
         setOnArea = {setOnArea}
 
+        locX = {locX}
+        setLocX = {setLocX}
+        locY = {locY}
+        setLocY = {setLocY}
+
         lastArea = {lastArea}
         nextArea = {nextArea}
 
         onTouchStart = {onTouchStart}
         onTouchMove = {onTouchMove}
         onTouchStop = {onTouchStop}
+
+        endOfStroke = {endOfStroke}
       >
       </TouchPad>
 
@@ -234,7 +264,7 @@ function TempControlPad(props)
     <View style={styles.tempControl}>
       <Text> Temporary Control Panel </Text>
       <Text>Current Area Is...</Text>
-      <Text style={styles.bigText}>{props.onArea}</Text>
+      <Text style={styles.bigText}>{props.onArea} {Math.round(props.locX)} {Math.round(props.locY)} </Text>
     </View>
   )
 }
@@ -250,7 +280,7 @@ const styles = StyleSheet.create({
     height: '20%',
   },
   bigText: {
-    fontSize: 100,
+    fontSize: 50,
     color: 'blue',
   }
 });

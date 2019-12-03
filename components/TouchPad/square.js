@@ -21,7 +21,6 @@ export default function shape(props)
     var parentWidth = props.parentWidth;
     var parentHeight = props.parentHeight;
 
-
     //for detecting which area we are on
     //i.e is my touch currently on this area?
     var area = props.area;
@@ -38,16 +37,6 @@ export default function shape(props)
     var top = helper.getSpaceInterval(positionY, elementsPerCol, radius, parentHeight);
 
     const [color, setColor] = useState({square: "blue", circle: "red"});
-
-    // var squareStyle = {
-    //     //flex: 1,
-    //     backgroundColor: {color},
-    //     position: "absolute",
-    //     width: (radius*2),
-    //     height: (radius*2),
-    //     top: top,
-    //     left: left,
-    // }
 
     styles = StyleSheet.create({
         square: {
@@ -82,23 +71,25 @@ export default function shape(props)
     {
         //TODO check type first before starting!!!
         // check if on area, update setArea accordingly
-        // console.log("tryp update")
+        
+
         if ((left < props.locX) && (props.locX < (left + (2*radius)))
         && ((top + (.2*HEIGHT)) < props.locY) && (props.locY < ((top + (.2*HEIGHT)) + (2*radius))))
         {
+            // console.log("set to area " + z)
             setOnArea(props.id);
             // console.log("area updated");
-
             // setOnArea("left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
         }
         else if (area == props.id)
         {
+            // console.log("update area");
             setOnArea(0);
             //setOnArea("0  left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
 
         }
 
-    },[locX, locY, props.updateArea] );
+    },[locX, locY, props.updateArea, props.endOfStroke] );
 //[locX, locY, props.updateArea]
     useEffect(() => {
         if (props.nextArea == props.id)

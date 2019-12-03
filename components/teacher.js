@@ -11,60 +11,11 @@ const characters = ({
 const keys = Object.keys(characters);
 const numberOfCharacters = keys.length;
 
-//logic behind teacher functions
-
-//check if area is correct
-
-//TESTING RELATED
-
-//returns next step
-//0.0 if done!
-//types:
-//0 means mid-stroke
-//1 means new stroke
-//2 means entire character is done!
-// export function getNextStep(lastStep, strokeLength, numberOfStrokes)
-// {
-//     console.log("NEXT STEP");
-//     console.log("last stroke: " + lastStep.stroke + "| subStroke " + lastStep.subStroke);
-//     console.log("Stroke length " + strokeLength + "| num STrokes " + numberOfStrokes);
-//     console.log("")
-//     var result = {
-//         type: 0,
-//         step: {
-//             stroke: lastStep.stroke,
-//             subStroke: (lastStep.strokeStep + 1),
-//         },
-//     }
-
-//     if (lastStep.strokeStep >= strokeLength)
-//     {
-//         //at the end of the stroke
-//         if (lastStep.stroke >= numberOfStrokes)
-//         {
-//             // console.log("DONE STROKE")
-//             //no more new strokes
-//             //CHARACTER SUCCESS
-//             result.type = 2;
-//             result.step.stroke = lastStep.stroke;
-//             result.step.subStroke = lastStep.strokeStep;
-//         }
-//         //NEW STROKE
-//         else 
-//         {
-//             result.type = 1;
-//             result.step.stroke = lastStep.stroke + 1;
-//             result.step.subStroke = 0;
-//         }
-//     }
-//     return result;
-// }
-
-//call this when you want to get the ext step in a stroke (i.e the next point to reach during the same stroke)
-//returns null when there are no other steps left (i.e we were already on the last point of the stroke!)!
 export function getNextStep(currentPoint, character)
 {
-    console.log(character);
+    // console.log(character);
+    console.log("=> getNextStep")
+    
     if (character === undefined)
     {
         console.log('character is undefined');
@@ -86,7 +37,7 @@ export function getNextStep(currentPoint, character)
         return;
     }
     // console.log('getting next step');
-    console.log('point: STEP ' + currentPoint.step + " stroke " + currentPoint.step);
+    console.log('point: stroke ' + currentPoint.stroke + " step " + currentPoint.step);
     if (character[currentPoint.stroke] === undefined)
     {
         console.log('stroke ' + currentPoint.stroke + " does not exist")
@@ -99,8 +50,8 @@ export function getNextStep(currentPoint, character)
     else
     {
         var newStep = currentPoint.step + 1;
-        console.log('new step is ' + newStep)
-
+        // console.log('new step is ' + newStep)
+        console.log("SUCCESS: newStep is " + newStep)
         return (newStep);
     }
 }
