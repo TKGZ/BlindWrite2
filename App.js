@@ -21,20 +21,20 @@ export default function App() {
 
   //by default it is the empty pattern
   // const [charPattern, setCharPattern] = useState([[7,2,9],[4,6]]);
-  const [charPattern, setCharPattern] = useState([[1,2,3,6,5,4,7,8,9]]);
+  const [charPattern, setCharPattern] = useState([[1,2,3,6,5,4,7,8,9],[2,5,7]]);
 
   const [endOfStroke, setEndOfStroke] = useState(false);
   const [endOfCharacter, setEndOfCharacter] = useState(false);
   
   const startPoint = helper.createPoint(0,0);
-  const startNext = helper.createPoint(0, 1);
+  const startNext = helper.createPoint(0, 0);
 
   //POINTS
   const [lastPoint, setLastPoint] = useState(startPoint);
   const [nextPoint, setNextPoint] = useState(startNext);
   //AREAS (Correspondingly)
   const [lastArea, setLastArea] = useState(1);
-  const [nextArea, setNextArea] = useState(2);
+  const [nextArea, setNextArea] = useState(1);
 
   const [failedStroke, setFailedStroke] = useState(false);
   
@@ -52,8 +52,7 @@ export default function App() {
     setNextPoint(newPoint);
     setLastPoint(newLastPoint);
 
-    setLastArea(charPattern[lastPoint.stroke][lastPoint.step]);
-    setNextArea(charPattern[nextPoint.stroke][nextPoint.step]);
+    updateAreasFromPoints();
   }
 
   function onTouchMove(values)
@@ -72,10 +71,10 @@ export default function App() {
         }
         else
         {
-          newPoint = helper.createPoint(nextStroke, 0);
+          //newPoint = helper.createPoint(nextPoint.stroke + 1, 0);
+          //console.log("NEW POINT for next stroke " + newPoint.stroke + " " + newPoint.step)
+          console.log("end of stroke but not of character");
         }
-        //set the nextPoint to the last point!
-        updatePoints(lastPoint);
       }
       else
       {
@@ -136,14 +135,16 @@ export default function App() {
     setEndOfStroke(false);
     setEndOfCharacter(false);
 
-    var newPoint = helper.createPoint(teacher.getNextStroke(nextPoint, charPattern), 0);
-    var newSecondPoint = helper.createPoint(teacher.getNextStep(newPoint, charPattern), 0);
+    //TODO fix this
+    var newPoint = helper.createPoint(nextPoint.stroke + 1, 0);
+    
+    setLastPoint(newPoint);
     setNextPoint(newPoint);
-    updatePoints(newSecondPoint);
+    updateAreasFromPoints();
 
-    //TODO update to the next stroke!
-    console.log("Stroke Success");
+    console.log("Stroke Success, switch to next stroke");
   }
+
   //Called when FAIL:
   //2 conditions:
   //- hits the wrong node
@@ -171,8 +172,28 @@ export default function App() {
 
   function updateAreasFromPoints()
   {
-    setLastArea(charPattern[lastPoint.stroke][lastPoint.step]);
-    setNextArea(charPattern[nextPoint.stroke][nextPoint.step]);
+    //check if on any of the last stages
+    console.log("nextPoint udpating to area of " + nextPoint.stroke + " " + nextPoint.step);
+    
+    if (lastPoint.stroke === null || lastPoint.step === null)
+    {
+      console.log("invalid last point update")
+      setLastArea(-1);
+    }
+    else
+    {
+      setLastArea(charPattern[lastPoint.stroke][lastPoint.step]);
+
+    }
+    if (nextPoint.stroke === null || nextPoint.step === null)
+    {
+      console.log("invalid next point update")
+      setNextArea(-1);
+    }
+    else
+    {
+      setNextArea(charPattern[nextPoint.stroke][nextPoint.step]);
+    }
   }
 
   //when hit last point of last stroke and lift the finger not on another character

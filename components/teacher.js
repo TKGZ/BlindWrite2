@@ -64,12 +64,36 @@ const numberOfCharacters = keys.length;
 //returns null when there are no other steps left (i.e we were already on the last point of the stroke!)!
 export function getNextStep(currentPoint, character)
 {
-    // console.log('getting next step');
-    console.log('point: STEP ' + currentPoint.step + " stroke " + currentPoint.step)
-    var strokeLength = character[currentPoint.stroke].length;
-    if (currentPoint.step >= strokeLength)
+    console.log(character);
+    if (character === undefined)
     {
-        //last point on current stroke
+        console.log('character is undefined');
+        return;
+    }
+    else if (currentPoint === undefined)
+    {
+        console.log('currentPont is undefined');
+        return;
+    }
+    else if (currentPoint.stroke == null)
+    {
+        console.log("Final Stroke Reached");
+        return;
+    }
+    else if (currentPoint.step == null)
+    {
+        console.log("Final Step reached");
+        return;
+    }
+    // console.log('getting next step');
+    console.log('point: STEP ' + currentPoint.step + " stroke " + currentPoint.step);
+    if (character[currentPoint.stroke] === undefined)
+    {
+        console.log('stroke ' + currentPoint.stroke + " does not exist")
+    }
+    var strokeLength = character[currentPoint.stroke].length;
+    if (currentPoint.step >= strokeLength - 1)
+    {
         return (null);
     }
     else
