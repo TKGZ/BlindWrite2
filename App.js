@@ -71,7 +71,7 @@ export default function App() {
         if (nextStroke == null)
         {
           setEndOfCharacter(true);
-          console.log("MOVE: end of character (AND stroke)")
+          console.log("MOVE: end of character AND stroke)")
         }
         else
         {
@@ -101,9 +101,8 @@ export default function App() {
     setFailedStroke(false);
 
     //TODO fix this temporary error
-    
-
     console.log("on touch start")
+    
     if (onArea == nextArea || onArea == lastArea)
     {
       // console.log("on area")
@@ -124,8 +123,15 @@ export default function App() {
 
     setLocX(-1);
     setLocY(-1);
+
     setOnArea(0);
 
+
+    setTimeout(() => {
+      setOnArea(0);
+      clearTimeout(this);
+    }, 100);
+    // clearInterval(interval);
 
     if (endOfCharacter)
     {
@@ -162,6 +168,17 @@ export default function App() {
 
     setOnArea(0);
     console.log("Stroke Success, switch to next stroke");
+  }
+
+    //when hit last point of last stroke and lift the finger not on another character
+  //THEN: switch to the next character
+  
+  function onCharSuccess()
+  {
+    //TODO update to the next character!
+
+    resetPoints();
+    console.log("Character SUCCESS");
   }
 
   //Called when FAIL:
@@ -220,14 +237,7 @@ export default function App() {
     }
   }
 
-  //when hit last point of last stroke and lift the finger not on another character
-  //THEN: switch to the next character
-  
-  function onCharSuccess()
-  {
-    //TODO update to the next character!
-    console.log("Character SUCCESS");
-  }
+
 
   return (
     <View style={styles.container}>

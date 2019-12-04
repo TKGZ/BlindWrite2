@@ -81,3 +81,26 @@ export function Point(stroke, step)
     this.stroke = stroke;
     this.step = step;
 }
+
+//weak character checker
+export function isValidCharacter(character)
+{
+    if (character === undefined)
+    {
+        console.log("invalid character");
+
+        return false;
+    }
+
+    for (var i = 0; i < character.length; i++)
+    {
+        if (character[i] === undefined)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}

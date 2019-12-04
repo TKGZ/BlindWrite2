@@ -71,8 +71,16 @@ export default function shape(props)
     {
         //TODO check type first before starting!!!
         // check if on area, update setArea accordingly
-        
+        setTimeout(() => {
+            updateArea();
+            clearTimeout(this);
+        }, 10);
 
+        // updateArea();
+    },[locX, locY] );
+
+    function updateArea()
+    {
         if ((left < props.locX) && (props.locX < (left + (2*radius)))
         && ((top + (.2*HEIGHT)) < props.locY) && (props.locY < ((top + (.2*HEIGHT)) + (2*radius))))
         {
@@ -87,8 +95,9 @@ export default function shape(props)
             setOnArea(0);
             //setOnArea("0  left: " + left + "|locA: " + locX + "| top: " + top + "| locb: " + locY);
         }
+    }
 
-    },[locX, locY] );
+
 //[locX, locY, props.updateArea], props.updateArea, props.endOfStroke
     useEffect(() => {
         if (props.nextArea == props.id)

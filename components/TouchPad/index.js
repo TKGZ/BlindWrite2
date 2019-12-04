@@ -105,23 +105,21 @@ export default function TouchPad(props)
     //gesture events (start of gesture, moving of gesture, end of gesture)
     function onStart(e, g)
     {
+        updateLocations(e);
+
         setUpdateArea(updateArea+1);
         props.onTouchStart();
     }
 
     function onMove(e, g)
     {
-        x =  e.nativeEvent.pageX;
-        y = e.nativeEvent.pageY;
         a = e.nativeEvent.locationX;
         b = e.nativeEvent.locationY;
 
-        //tryVibration(evt);
-        setLocX(x);
-        setLocY(y);
-
         setLocA(a);
         setLocB(b);
+
+        updateLocations(e);
 
         props.onTouchMove();
         //check if current touch on a vibration one, then feedback
@@ -135,8 +133,22 @@ export default function TouchPad(props)
     //TODO
     function onEnd(e, g)
     {
+        // updateLocations(e);
+
+        setLocX(-1);
+        setLocY(-1);
         props.onTouchStop();
     }
+
+    function updateLocations(e)
+    {
+        x = e.nativeEvent.pageX;
+        y = e.nativeEvent.pageY;
+
+        setLocX(x);
+        setLocY(y);
+    }
+
     
     //update the state of the squares
     useEffect(() => {
