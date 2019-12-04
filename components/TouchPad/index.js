@@ -1,5 +1,6 @@
 import * as helper from '../helper';
 import * as teacher from '../teacher';
+import * as feedback from '../feedback';
 
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Dimensions, PanResponder, Vibration } from 'react-native';
@@ -155,8 +156,11 @@ export default function TouchPad(props)
         setSquares(getSquares());
         setCircles(getCircles());
         //check if current touch on what type, then vibrate
-    })
+    },[locX, locY]);
 
+    useEffect(() => {
+        feedback.onAreaChange(onArea);
+    }, [onArea]);
     //generates enough squares to fill out everything!
     function getSquares(rows = SQUARES_PER_ROW, cols = SQUARES_PER_COL)
     {

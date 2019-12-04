@@ -4,8 +4,9 @@ import { StyleSheet, Text, View, Dimensions } from 'react-native';
 
 import TouchPad from './components/TouchPad';
 import * as helper from './components/helper';
-
+import * as feedback from './components/feedback'
 import * as teacher from './components/teacher';
+
 
 export default function App() {
 
@@ -16,7 +17,7 @@ export default function App() {
   const [teachingMode, setTeachingMode] = useState(true);
 
   //name of character we are writing
-  const [charName, setCharName] = useState('a');
+  const [charName, setCharName] = useState('B');
   //array description of how it is to be written
 
   const [locX, setLocX] = useState(0);
@@ -80,8 +81,8 @@ export default function App() {
          
       }
       else
-      {
-        //increment the point by one!
+      {        
+        feedback.correctArea();
         newPoint = helper.createPoint(nextPoint.stroke, nextStep);
       }
       updatePoints(newPoint);
@@ -189,13 +190,18 @@ export default function App() {
   {
     //stroke fail feedback
     //reset character
-    console.log("Stroke Fail because " + reason);
-    setEndOfCharacter(false);
-    setEndOfStroke(false);
+    if (failedStroke == false)
+    {
+      //play audio
+      console.log("Stroke Fail because " + reason);
+      setEndOfCharacter(false);
+      setEndOfStroke(false);
 
-    setFailedStroke(true);
+      feedback.fail();
+      resetPoints();
 
-    resetPoints();
+      setFailedStroke(true);
+    }
   }
 
   //reset points and their areas to the first two elements of the character!
@@ -246,6 +252,8 @@ export default function App() {
 
         locX = {locX}
         locY = {locY}
+
+        charName = {charName}
       >
 
       </TempControlPad>
@@ -279,7 +287,7 @@ function TempControlPad(props)
     <View style={styles.tempControl}>
       <Text> Temporary Control Panel </Text>
       <Text>Current Area Is...</Text>
-      <Text style={styles.bigText}>{props.onArea} {Math.round(props.locX)} {Math.round(props.locY)} </Text>
+      <Text style={styles.bigText}>{props.charName} {props.onArea} {Math.round(props.locX)} {Math.round(props.locY)} </Text>
     </View>
   )
 }

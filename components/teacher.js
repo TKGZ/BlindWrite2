@@ -62,13 +62,15 @@ export function getNextStroke(currentPoint, character)
 {
     console.log("getting next stroke")
     var numberOfStrokes = character.length;
-    if (currentPoint.stroke >= numberOfStrokes)
+    if (currentPoint.stroke >= numberOfStrokes - 1)
     {
         //no more strokes left!
+        console.log("NO NEXT STROKE")
         return (null);
     }
     else
     {
+        console.log("NEXT STROKE" + currentPoint.stroke + 1)
         return (currentPoint.stroke + 1);
     }
 }
